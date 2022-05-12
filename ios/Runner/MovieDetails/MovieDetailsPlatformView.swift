@@ -8,11 +8,11 @@
 import Flutter
 import UIKit
 import Kingfisher
-import SwiftUI
 
 class MovieDetailsPlatformView: NSObject, FlutterPlatformView {
     private var _view: UIView = UIView()
-    var movieId: String = "-1"
+    private var _movieId: String = "-1"
+    private var _movieView : MovieDetailsView
     
     init(
         frame: CGRect,
@@ -20,32 +20,22 @@ class MovieDetailsPlatformView: NSObject, FlutterPlatformView {
         arguments args: Any?,
         binaryMessenger messenger: FlutterBinaryMessenger?
     ) {
-  
+        _movieView = MovieDetailsView.init(frame: frame)
+        
         let movieID = args as? Dictionary<String, String>
         if (movieID != nil)
-        {movieId = movieID!["movieID"]!}
+        {_movieId = movieID!["movieID"]!}
         super.init()
-        createErrorView(view: _view)
-    }
-
-    func view() -> UIView {
-        let movieView = MovieDetailsView()
-        print(movieId)
-        if (movieId == "-1"){
-            return _view
+        if _movieId == "-1"{
+            createErrorView(view: _view)
+        }else{
+            createMovieDetailsView()
         }
-        getMovieDetails(id: movieId) { response, error in
-            if error != nil {
-                print(error!.localizedDescription)
-            }else{
-                print(response!.backdropPath)
-                movieView.movieImage.kf.setImage(with: .network(URL(string: "https://image.tmdb.org/t/p/w500\(response!.backdropPath)")!))
-                movieView.movieNameLabel.text = response?.title
-//                movieView.movieGenreLabel.text = response?.genres
-//                movieView.movieDescLabel.text = response?.overview
-                
-            }}
-        return movieView
+        
+    }
+    
+    func view() -> UIView {
+        return _movieView
     }
     
     func createErrorView(view _view: UIView){
@@ -54,7 +44,27 @@ class MovieDetailsPlatformView: NSObject, FlutterPlatformView {
         nativeLabel.text = "Error Loading Data"
         nativeLabel.textColor = UIColor.white
         nativeLabel.textAlignment = .center
-        nativeLabel.frame = CGRect(x: 100, y: 100, width: 180, height: 48.0)
+        nativeLabel.frame = CGRect(x: 200, y: 100, width: 180, height: 48.0)
         _view.addSubview(nativeLabel)
+    }
+    
+    func createMovieDetailsView(){
+        getMovieDetails(id: _movieId) { response in
+            guard let response = response else{
+                return
+            }
+            print(response.backdropPath)
+            self._movieView.avliable = true
+            self._movieView.nativeLabel.text = ""
+            self._movieView.movieImage.kf.setImage(with: .network(URL(string: "https://image.tmdb.org/t/p/w500\(response.backdropPath)")!))
+            self._movieView.movieNameLabel.text = response.title
+            var movieGenre = ""
+            for _genre in response.genres{
+                movieGenre = "\(movieGenre) \(_genre.name)"
+            }
+            self._movieView.movieGenreLabel.text = movieGenre
+            self._movieView.movieDescLabel.text = response.overview
+            self._movieView.movieDescL.text = "Description"
+        }
     }
 }

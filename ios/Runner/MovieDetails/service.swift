@@ -9,7 +9,7 @@ import Foundation
 
 let baseUrl = "https://api.themoviedb.org/3/movie/"
 
-func getMovieDetails(id: String, completionHandler: @escaping (MovieDetailsModel?, Error?) -> Void){
+func getMovieDetails(id: String, completionHandler: @escaping (MovieDetailsModel?) -> Void){
     
     var result: MovieDetailsModel?
     
@@ -18,15 +18,17 @@ func getMovieDetails(id: String, completionHandler: @escaping (MovieDetailsModel
     let task = URLSession.shared.dataTask(with: URL(string: url)!) { data, response, error in
         guard let data = data, error == nil else{
             print("Failed to retrieve Movie Details")
+            completionHandler(nil)
             return
         }
+        print(data)
         do{
             result = try JSONDecoder().decode(MovieDetailsModel.self, from: data)
-            print(result?.title)
-            completionHandler(result, nil)
+            print(result!.title)
+            completionHandler(result)
         }catch{
-            print("Failed to convert \(error.localizedDescription)")
-            completionHandler(nil, error)
+            print("Failed to convert \(error)")
+            completionHandler(nil)
         }
         
        

@@ -19,7 +19,6 @@ class MovieDetailsScreen extends StatelessWidget {
     const String viewType = '<platform-view-type>';
     // Pass parameters to the platform side.
     final Map<String, dynamic> creationParams = <String, dynamic>{};
-    print(movieID);
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         // return widget on Android.
@@ -31,7 +30,6 @@ class MovieDetailsScreen extends StatelessWidget {
         // This is used in the platform side to register the view.
         const String viewType = '<platform-view-type>';
         // Pass parameters to the platform side.
-        print(movieID);
         final Map<String, dynamic> creationParams = <String, dynamic>{};
         creationParams["movieID"] = movieID;
         return UiKitView(
