@@ -10,6 +10,7 @@ import UIKit
 import Kingfisher
 
 class MovieDetailsPlatformView: NSObject, FlutterPlatformView {
+    var spinner = UIActivityIndicatorView()
     private var _view: UIView = UIView()
     private var _movieId: String = "-1"
     private var _movieView : MovieDetailsView
@@ -22,16 +23,17 @@ class MovieDetailsPlatformView: NSObject, FlutterPlatformView {
     ) {
         _movieView = MovieDetailsView.init(frame: frame)
         
+        
         let movieID = args as? Dictionary<String, String>
         if (movieID != nil)
         {_movieId = movieID!["movieID"]!}
+        
         super.init()
         if _movieId == "-1"{
             createErrorView(view: _view)
         }else{
             createMovieDetailsView()
         }
-        
     }
     
     func view() -> UIView {
@@ -50,21 +52,26 @@ class MovieDetailsPlatformView: NSObject, FlutterPlatformView {
     
     func createMovieDetailsView(){
         getMovieDetails(id: _movieId) { response in
-            guard let response = response else{
+            
+            guard let movie = response else{
+                print("Second error")
                 return
             }
-            print(response.backdropPath)
-            self._movieView.avliable = true
-            self._movieView.nativeLabel.text = ""
-            self._movieView.movieImage.kf.setImage(with: .network(URL(string: "https://image.tmdb.org/t/p/w500\(response.backdropPath)")!))
-            self._movieView.movieNameLabel.text = response.title
             var movieGenre = ""
-            for _genre in response.genres{
-                movieGenre = "\(movieGenre) \(_genre.name)"
+            for _genre in movie.genres{
+                movieGenre = "\(movieGenre)\(_genre.name) "
             }
-            self._movieView.movieGenreLabel.text = movieGenre
-            self._movieView.movieDescLabel.text = response.overview
+            self._movieView.movieNameLabel.text = movie.title
+            self._movieView.movieGenreLabel.text = "Genre: \(movieGenre)"
+            self._movieView.movieDescLabel.text = "\(movie.overview ?? "No Description is avaliable for this movie")"
             self._movieView.movieDescL.text = "Description"
+            guard let imageName = movie.backdropPath ?? movie.posterPath else{
+                self._movieView.movieImage.image = UIImage(named: "no-poster-available")
+                return
+            }
+            self._movieView.movieImage.kf.setImage(with: .network(URL(string: "https://image.tmdb.org/t/p/w500\(imageName)")!))
+            self._movieView.spinner.stopAnimating()
+            self._movieView.spinner.hidesWhenStopped = true
         }
     }
 }

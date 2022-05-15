@@ -1,42 +1,3 @@
-// import 'package:flutter/cupertino.dart';
-// import 'package:flutter/material.dart';
-
-// import '../../Service/get_movies_service.dart';
-
-// class MovieCardWidget extends StatelessWidget {
-//   String imagePath;
-//   String title;
-//   GetMovieService get = GetMovieService();
-
-//   MovieCardWidget({required this.imagePath, required this.title});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       children: [
-//         Flexible(
-//             fit: FlexFit.tight,
-//             child: ClipRRect(
-//               borderRadius: BorderRadius.circular(8.0),
-//               child: Stack(children: [
-//                 Image.network(
-//                   imagePath,
-//                   // width: 100,
-//                   // height: 250,
-//                 ),
-//                 Positioned(top: 150, left: 90, child: Text("New"))
-//               ]),
-//             )),
-//         FlatButton(
-//             onPressed: () {
-//               get.getMovies();
-//             },
-//             child: Text(title)),
-//       ],
-//     );
-//   }
-// }
-
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/cupertino.dart';
@@ -71,7 +32,7 @@ class MovieCardWidget extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8.0),
                 child: Image.network(
-                  "https://image.tmdb.org/t/p/w500/${movie.backdropPath}",
+                  "https://image.tmdb.org/t/p/w500/${movie.backdropPath ?? movie.posterPath}",
                   // width: 100,
                   // height: 250,
                 ),

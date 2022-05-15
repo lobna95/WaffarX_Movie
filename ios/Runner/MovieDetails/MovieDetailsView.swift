@@ -17,20 +17,11 @@ class MovieDetailsView: UIView {
     @IBOutlet weak var movieDescL: UILabel!
     
     
-    
-    let nativeLabel = UILabel()
-    var avliable: Bool = false
-    
-    private var _view: UIView = UIView()
-    
+    let spinner = UIActivityIndicatorView(style: .whiteLarge)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-//        if avliable{
-            commonInit()
-//        }else{
-//            loadingView()
-//        }
+        commonInit()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -41,18 +32,23 @@ class MovieDetailsView: UIView {
     func commonInit() {
         let viewFromXib = Bundle.main.loadNibNamed("MovieDetailsView", owner: self, options: nil)![0] as! UIView
         viewFromXib.frame = self.bounds
+        
+        // Add Nave Bar
+//        let navBar = UINavigationBar(frame: CGRect(x: 0, y: 50, width: UIScreen.main.bounds.size.width, height: 400))
+//        navBar.barTintColor = UIColor(red: 37, green: 150, blue: 190, alpha: 0.0)
+//        navBar.titleTextAttributes = [.foregroundColor: UIColor.white]
+//        let naveItem = UINavigationItem(title: "Movie Details")
+//        naveItem.backBarButtonItem = UIBarButtonItem(title: "back", style: .plain, target: nil, action: nil)
+//
+//        navBar.setItems([naveItem], animated: true)
+//        viewFromXib.addSubview(navBar)
+        
+        // Add Loading Indicator
+        spinner.startAnimating()
+        spinner.frame = CGRect(x: 100, y: 350, width: 180, height: 48.0)
+        viewFromXib.addSubview(spinner)
+
+        
         addSubview(viewFromXib)
-        loadingView()
-    }
-    
-    func loadingView(){
-        movieDescL.text = ""
-        nativeLabel.text = "Loading View"
-        nativeLabel.textColor = UIColor.white
-        nativeLabel.textAlignment = .center
-        nativeLabel.frame = CGRect(x: 100, y: 300, width: 180, height: 48.0)
-        _view.bounds = self.bounds
-        _view.addSubview(nativeLabel)
-        addSubview(_view)
     }
 }
